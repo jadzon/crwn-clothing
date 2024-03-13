@@ -22,10 +22,29 @@ export async function LoginWithUsernameAndPassword(username,password){
             username,
             password
         });
-        console.log(response.data);
         return response.data
     } catch(error){
         console.error('Error:', error);
         throw error;
     }
+}
+export async function ValidateTEMP() {
+    console.log('In validate');
+    let isValid = false;
+    try {
+        // Extract authToken from cookie
+        const authToken = document.cookie.replace(/(?:(?:^|.*;\s*)authToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
+
+        const response = await axios.post(`http://localhost:${PORT_NUM}/api/validate`, {
+            authToken: authToken // Send authToken in the request payload
+        });
+
+        isValid = response.data.valid;
+        console.log(isValid);
+    } catch (error) {
+        console.error('Error:', error);
+        // Handle error appropriately
+    }
+    
+    return isValid;
 }

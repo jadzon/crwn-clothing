@@ -36,7 +36,7 @@ func main() {
 	router.POST("/api/logout", func(c *gin.Context) {
 		middleware.RequireAuth(c, userDB)
 	}, controllers.Logout)
-	router.GET("/api/validate", func(c *gin.Context) {
+	router.POST("/api/validate", func(c *gin.Context) {
 		middleware.RequireAuth(c, userDB)
 	}, controllers.Validate)
 	router.Run(os.Getenv("PORT_NUM"))

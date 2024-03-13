@@ -18,11 +18,13 @@ const SignInForm= ()=>{
         event.preventDefault();
         try{
             const response = await LoginWithUsernameAndPassword(displayName, password);
-            console.log(response);
+            console.log(response.valid);
+            document.cookie = `authToken=${response.authToken}; max-age=3600; path=/; domain=localhost`;
         }catch(error){
             console.log('user creation encountered an error', error);
         }
         setFormFields(defaultformFields)
+        console.log('Cookie: ',document.cookie)
 
     }
     const handleChange = (event)=>{

@@ -57,28 +57,27 @@ func Login(c *gin.Context, db models.Database) {
 		}
 	}
 	if !valid {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Invalid username or password"})
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Invalid username or password", "valid": false})
 	} else {
 		// Creating new token
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 			"id":        foundUser.ID,
 			"username":  foundUser.Username,
-			"expiresAt": time.Now().Add(time.Minute * 5).Unix(),
+			"expiresAt": time.Now().Add(time.Hour * 2).Unix(),
 		})
 		tokenString, err := token.SignedString([]byte(os.Getenv("TOKEN_SECRET_KEY")))
 		if err != nil {
 			c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Failed to create token"})
 			return
 		}
-		c.SetSameSite(http.SameSiteLaxMode)
-		c.SetCookie("Authcookerson", tokenString, 60*5, "", "", false, true)
-		c.IndentedJSON(http.StatusAccepted, gin.H{"message": "Successfully logged in"})
+		// c.SetCookie("Authcookerson", tokenString, 60*60*2, "localhost", "localhost", false, true)
+		c.IndentedJSON(http.StatusAccepted, gin.H{"message": "Created token", "valid": true, "authToken": tokenString})
 	}
 }
 func Logout(c *gin.Context) {
-	c.SetCookie("Authcookerson", "", -1, "", "", false, true)
+	c.SetCookie("Authcookerson", "", -1, "", "localhost", false, true)
 	c.JSON(http.StatusOK, gin.H{"message": "Logged out"})
 }
 func Validate(c *gin.Context) {
-	c.IndentedJSON(http.StatusAccepted, gin.H{"message": "User Valid"})
+	c.IndentedJSON(http.StatusOK, gin.H{"valid": true, "message": "User Valid"})
 }
